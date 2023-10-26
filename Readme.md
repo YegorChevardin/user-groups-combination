@@ -29,7 +29,7 @@ spring.datasource.password=${DB_PASS}
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 ```
 
-Replace `${DB_URL}`, `${DB_PORT}`, `${DB_NAME}`, `${DB_USER}`, and `${DB_PASS}` with your database connection details.
+Replace `${DB_URL}`, `${DB_PORT}`, `${DB_NAME}`, `${DB_USER}`, and `${DB_PASS}` with your database connection details **OR** create environment variables with the names specified and start the project.
 
 ### Build and Run
 
