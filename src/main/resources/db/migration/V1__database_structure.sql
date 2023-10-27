@@ -1,7 +1,7 @@
 -- -----------------------------------------------------
--- Table `groups`
+-- Table `teams`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `groups`
+CREATE TABLE IF NOT EXISTS `teams`
 (
     `id`   INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(100) NOT NULL,
@@ -20,13 +20,13 @@ CREATE TABLE IF NOT EXISTS `users`
     `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `name`        VARCHAR(45)  NOT NULL,
     `second_name` VARCHAR(45)  NOT NULL,
-    `group_id`    INT UNSIGNED NOT NULL,
+    `team_id`    INT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-    INDEX `fk_users_groups_idx` (`group_id` ASC) VISIBLE,
-    CONSTRAINT `fk_users_groups`
-        FOREIGN KEY (`group_id`)
-            REFERENCES `groups` (`id`)
+    INDEX `fk_users_teams_idx` (`team_id` ASC) VISIBLE,
+    CONSTRAINT `fk_users_teams`
+        FOREIGN KEY (`team_id`)
+            REFERENCES `teams` (`id`)
             ON DELETE CASCADE
             ON UPDATE NO ACTION
 )
