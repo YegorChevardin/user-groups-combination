@@ -14,11 +14,11 @@ import java.util.List;
  * @version 0.0.1
  */
 @Entity
-@Table(name = "groups")
+@Table(name = "teams")
 @Getter
 @Setter
 @NoArgsConstructor
-public class GroupEntity {
+public class TeamEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -26,6 +26,6 @@ public class GroupEntity {
   @Column(name = "name", length = 100, nullable = false)
   private String name;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "team")
   private List<UserEntity> users = new ArrayList<>();
 }

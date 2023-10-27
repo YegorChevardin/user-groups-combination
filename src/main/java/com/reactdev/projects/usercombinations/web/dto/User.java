@@ -14,5 +14,5 @@ public class User {
   private Long id;
   private String name;
   private String secondName;
-  private Group group;
+  private Team team;
 }

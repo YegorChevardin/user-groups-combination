@@ -27,6 +27,6 @@ public class UserEntity {
   String secondName;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "group_id", referencedColumnName = "id")
-  private GroupEntity group;
+  @JoinColumn(name = "team_id", referencedColumnName = "id")
+  private TeamEntity team;
 }

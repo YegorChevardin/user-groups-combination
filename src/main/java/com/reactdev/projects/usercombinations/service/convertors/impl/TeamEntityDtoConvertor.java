@@ -1,15 +1,15 @@
 package com.reactdev.projects.usercombinations.service.convertors.impl;
 
-import com.reactdev.projects.usercombinations.repository.entities.GroupEntity;
+import com.reactdev.projects.usercombinations.repository.entities.TeamEntity;
 import com.reactdev.projects.usercombinations.service.convertors.EntityDtoConvertor;
-import com.reactdev.projects.usercombinations.web.dto.Group;
+import com.reactdev.projects.usercombinations.web.dto.Team;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GroupEntityDtoConvertor implements EntityDtoConvertor<GroupEntity, Group> {
+public class TeamEntityDtoConvertor implements EntityDtoConvertor<TeamEntity, Team> {
   @Override
-  public Group convertEntityToDto(GroupEntity entity) {
-    Group group = new Group();
+  public Team convertEntityToDto(TeamEntity entity) {
+    Team group = new Team();
 
     group.setId(entity.getId());
     group.setName(entity.getName());
