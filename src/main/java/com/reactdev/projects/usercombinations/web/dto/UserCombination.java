@@ -23,10 +23,13 @@ public class UserCombination {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof UserCombination that)) return false;
-    return Objects.equals(getFirstUser(), that.getFirstUser())
-        && Objects.equals(getSecondUser(), that.getSecondUser());
 
-    //todo if statement
+    if ((this.firstUser.equals(that.getFirstUser()) && this.secondUser.equals(that.getSecondUser()))
+        || (this.firstUser.equals(that.getSecondUser())
+            && this.secondUser.equals(that.getFirstUser()))) {
+      return true;
+    }
+    return false;
   }
 
   @Override
