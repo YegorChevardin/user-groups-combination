@@ -1,9 +1,9 @@
 package com.reactdev.projects.usercombinations.service.convertors.impl;
 
-import com.reactdev.projects.usercombinations.repository.entities.GroupEntity;
+import com.reactdev.projects.usercombinations.repository.entities.TeamEntity;
 import com.reactdev.projects.usercombinations.repository.entities.UserEntity;
 import com.reactdev.projects.usercombinations.service.convertors.EntityDtoConvertor;
-import com.reactdev.projects.usercombinations.web.dto.Group;
+import com.reactdev.projects.usercombinations.web.dto.Team;
 import com.reactdev.projects.usercombinations.web.dto.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class UserEntityDtoConvertor implements EntityDtoConvertor<UserEntity, User> {
-  private final EntityDtoConvertor<GroupEntity, Group> groupEntityDtoConvertor;
+  private final EntityDtoConvertor<TeamEntity, Team> teamEntityDtoConvertor;
 
   @Override
   public User convertEntityToDto(UserEntity entity) {
@@ -20,7 +20,7 @@ public class UserEntityDtoConvertor implements EntityDtoConvertor<UserEntity, Us
     user.setId(entity.getId());
     user.setName(entity.getName());
     user.setSecondName(entity.getSecondName());
-    user.setGroup(groupEntityDtoConvertor.convertEntityToDto(entity.getGroup()));
+    user.setTeam(teamEntityDtoConvertor.convertEntityToDto(entity.getTeam()));
 
     return user;
   }
