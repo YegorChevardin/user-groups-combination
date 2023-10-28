@@ -24,4 +24,11 @@ public class UserEntityDtoConvertor implements EntityDtoConvertor<UserEntity, Us
 
     return user;
   }
+
+  @Override
+  public UserEntity convertDtoToEntity(User dto) {
+    return null;
+  }
+
+
 }

@@ -25,4 +25,9 @@ public class UserCombinationEntityDtoConvertor
 
     return userCombination;
   }
+
+  @Override
+  public UserCombinationEntity convertDtoToEntity(UserCombination dto) {
+    return null;
+  }
 }

@@ -4,4 +4,6 @@ package com.reactdev.projects.usercombinations.service.convertors;
 public interface EntityDtoConvertor<E, D> {
   /** Method that converts entity to dto */
   D convertEntityToDto(E entity);
+
+  E convertDtoToEntity(D dto);
 }

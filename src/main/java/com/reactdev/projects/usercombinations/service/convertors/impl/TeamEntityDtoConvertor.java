@@ -16,4 +16,12 @@ public class TeamEntityDtoConvertor implements EntityDtoConvertor<TeamEntity, Te
 
     return group;
   }
+
+  @Override
+  public TeamEntity convertDtoToEntity(Team dto) {
+    TeamEntity teamEntity = new TeamEntity();
+    teamEntity.setId(dto.getId());
+    teamEntity.setName(dto.getName());
+    return teamEntity;
+  }
 }
