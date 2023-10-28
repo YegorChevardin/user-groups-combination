@@ -52,6 +52,7 @@ public class UserCombinationsServiceImpl implements UserCombinationsService {
 
   private List<UserCombination> generateUniqueUserCombinations(
       List<UserCombination> oldCombinations, List<User> firstCommand, List<User> secondCommand) {
+    List<User> biggerCommand;
     firstCommand = new ArrayList<>(firstCommand);
     secondCommand = new ArrayList<>(secondCommand);
 
@@ -61,28 +62,46 @@ public class UserCombinationsServiceImpl implements UserCombinationsService {
     List<UserCombination> newCombinations;
 
     if (firstCommand.size() < secondCommand.size()) {
+      biggerCommand = secondCommand;
       newCombinations = performAction(firstCommand, secondCommand);
     } else {
+      biggerCommand = firstCommand;
       newCombinations = performAction(secondCommand, firstCommand);
     }
 
     Set<UserCombination> set1 = new HashSet<>(newCombinations);
     Set<UserCombination> set2 = new HashSet<>(oldCombinations);
 
-    if (!compareTeams(set1, set2)) {
+    if (!compareTeams(set1, set2, new HashSet<>(biggerCommand))) {
       return newCombinations;
     } else {
       return generateUniqueUserCombinations(oldCombinations, firstCommand, secondCommand);
     }
   }
 
-  private boolean compareTeams(Set<UserCombination> set1, Set<UserCombination> set2) {
-    for (UserCombination element : set1) {
-      if (set2.contains(element)) {
+  private boolean compareTeams(
+      Set<UserCombination> newCombinations,
+      Set<UserCombination> oldCombinations,
+      Set<User> biggerTeamUsers) {
+    for (UserCombination element : newCombinations) {
+      if (oldCombinations.contains(element)) {
         return true;
       }
     }
-    return false;
+
+    List<User> biggerTeamUsersFromOldCombinations =
+        extractSecondUsersFromCombinations(oldCombinations);
+    Set<User> biggerTeamUsersFromNewCombinations =
+        new HashSet<>(extractSecondUsersFromCombinations(newCombinations));
+
+    Set<User> userDifference = new HashSet<>(biggerTeamUsers);
+    biggerTeamUsersFromOldCombinations.forEach(userDifference::remove);
+    userDifference.addAll(biggerTeamUsersFromOldCombinations);
+
+    if (userDifference.size() > biggerTeamUsersFromNewCombinations.size()) {
+      return !userDifference.containsAll(biggerTeamUsersFromNewCombinations);
+    }
+    return !biggerTeamUsersFromNewCombinations.containsAll(userDifference);
   }
 
   private List<UserCombination> performAction(List<User> iterable, List<User> partners) {
@@ -96,5 +115,15 @@ public class UserCombinationsServiceImpl implements UserCombinationsService {
     }
 
     return combinations;
+  }
+
+  private List<User> extractSecondUsersFromCombinations(Set<UserCombination> combinations) {
+    List<User> result = new ArrayList<>();
+
+    for (UserCombination combination : combinations) {
+      result.add(combination.getSecondUser());
+    }
+
+    return result;
   }
 }
