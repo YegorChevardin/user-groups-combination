@@ -66,18 +66,23 @@ public class UserCombinationsServiceImpl implements UserCombinationsService {
       newCombinations = performAction(secondCommand, firstCommand);
     }
 
-    if (!compareTeams(newCombinations, oldCombinations)) {
+    Set<UserCombination> set1 = new HashSet<>(newCombinations);
+    Set<UserCombination> set2 = new HashSet<>(oldCombinations);
+
+    if (!compareTeams(set1, set2)) {
       return newCombinations;
     } else {
       return generateUniqueUserCombinations(oldCombinations, firstCommand, secondCommand);
     }
   }
 
-  private boolean compareTeams(
-      List<UserCombination> combination1, List<UserCombination> combination2) {
-    Set<UserCombination> set1 = new HashSet<>(combination1);
-    Set<UserCombination> set2 = new HashSet<>(combination2);
-    return set1.equals(set2);
+  private boolean compareTeams(Set<UserCombination> set1, Set<UserCombination> set2) {
+    for (UserCombination element : set1) {
+      if (set2.contains(element)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private List<UserCombination> performAction(List<User> iterable, List<User> partners) {
