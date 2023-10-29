@@ -30,6 +30,7 @@ public class UserCombinationEntityDtoConvertor
   public UserCombinationEntity dtoToEntity(UserCombination dto) {
     UserCombinationEntity userCombinationEntity = new UserCombinationEntity();
 
+    userCombinationEntity.setId(dto.getId());
     userCombinationEntity.setFirstUser(userEntityDtoConvertor.dtoToEntity(dto.getFirstUser()));
     userCombinationEntity.setSecondUser(userEntityDtoConvertor.dtoToEntity(dto.getSecondUser()));
 
