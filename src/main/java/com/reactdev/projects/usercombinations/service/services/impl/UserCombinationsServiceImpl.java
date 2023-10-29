@@ -7,32 +7,34 @@ import com.reactdev.projects.usercombinations.repository.repositories.UserReposi
 import com.reactdev.projects.usercombinations.service.convertors.EntityDtoConvertor;
 import com.reactdev.projects.usercombinations.service.services.UserCombinationsService;
 import com.reactdev.projects.usercombinations.web.dto.UserCombination;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class UserCombinationsServiceImpl implements UserCombinationsService {
 
-  @Autowired
   private final EntityDtoConvertor<UserCombinationEntity, UserCombination>
       userCombinationEntityDtoConvertor;
-
-  @Autowired
   private final UserCombinationRepository userCombinationRepository;
+  private final UserRepository userRepository;
 
   @Autowired
-  private final UserRepository userRepository;
+  public UserCombinationsServiceImpl(EntityDtoConvertor<UserCombinationEntity, UserCombination> userCombinationEntityDtoConvertor, UserCombinationRepository userCombinationRepository, UserRepository userRepository) {
+    this.userCombinationEntityDtoConvertor = userCombinationEntityDtoConvertor;
+    this.userCombinationRepository = userCombinationRepository;
+    this.userRepository = userRepository;
+  }
 
   @Override
   public List<UserCombination> generateNewCombinations() {
-    List<UserEntity> team1List = userRepository.findAllByTeam_Id(1L);
-    List<UserEntity> team2List = userRepository.findAllByTeam_Id(2L);
+    List<UserEntity> command1 = userRepository.findAllByTeam_Id(1L);
+    List<UserEntity> command2 = userRepository.findAllByTeam_Id(2L);
 
-    return generateCombinations(team1List, team2List);
+    return generateCombinations(command1, command2);
   }
 
 
@@ -42,7 +44,7 @@ public class UserCombinationsServiceImpl implements UserCombinationsService {
 
     Collections.shuffle(command1);
     Collections.shuffle(command2);
-    ifRepeated(combinations);
+    userCombinationRepository.deleteAll();
 
     for (int i = 0; i < minSize; i++) {
       UserCombinationEntity combinationEntity = new UserCombinationEntity();
@@ -52,23 +54,8 @@ public class UserCombinationsServiceImpl implements UserCombinationsService {
       combinations.add(userCombinationEntityDtoConvertor.convertEntityToDto(combinationEntity));
     }
 
-
-
     return combinations;
   }
 
-  public void ifRepeated(List<UserCombination> generatedCombinations){
-    List<UserCombination> savedCombinations = new ArrayList<>();
-    for(UserCombinationEntity entity : userCombinationRepository.findAll()){
-      savedCombinations.add(userCombinationEntityDtoConvertor.convertEntityToDto(entity));
-    }
-
-    for (UserCombination generatedCombination: generatedCombinations){
-      if (savedCombinations.contains(generatedCombination)){
-        userCombinationRepository.deleteAll();
-        return;
-      }
-    }
-  }
 
 }
