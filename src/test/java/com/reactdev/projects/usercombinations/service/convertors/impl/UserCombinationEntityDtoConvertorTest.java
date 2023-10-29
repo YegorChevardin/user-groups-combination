@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 class UserCombinationEntityDtoConvertorTest {
@@ -53,8 +53,10 @@ class UserCombinationEntityDtoConvertorTest {
         User secondUser = new User();
         UserEntity firstUserEntity = new UserEntity();
         UserEntity secondUserEntity = new UserEntity();
-
         UserCombination dto = new UserCombination();
+
+        firstUser.setId(1L);
+        secondUser.setId(2L);
         dto.setId(1L);
         dto.setFirstUser(firstUser);
         dto.setSecondUser(secondUser);
@@ -65,9 +67,7 @@ class UserCombinationEntityDtoConvertorTest {
         UserCombinationEntity entity = convertor.dtoToEntity(dto);
 
         assertEquals(dto.getId(), entity.getId());
-        //TODO здесь происходит магия - если раскоментировать следующую строку тест не пройдет
-//        assertEquals(firstUserEntity, entity.getFirstUser());
+        assertEquals(firstUserEntity, entity.getFirstUser());
         assertEquals(secondUserEntity, entity.getSecondUser());
-
     }
 }
