@@ -15,4 +15,5 @@ public class User {
   private String name;
   private String secondName;
   private Team team;
+  private int totalMark;
 }

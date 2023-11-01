@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Entity class that represents users from database
  *
@@ -29,4 +32,7 @@ public class UserEntity {
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "team_id", referencedColumnName = "id")
   private TeamEntity team;
+
+  @OneToMany (fetch = FetchType.LAZY, mappedBy = "user")
+  private List<MarkEntity> marks = new ArrayList<>();
 }

@@ -57,3 +57,21 @@ CREATE TABLE IF NOT EXISTS `users_combinations`
             ON UPDATE NO ACTION
 )
     ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `marks`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `marks`
+(
+    `id`   INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `date` DATE,
+    `mark` INT,
+    `user_id` INT UNSIGNED NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_users_ids`
+        FOREIGN KEY (`user_id`)
+            REFERENCES `users` (`id`)
+            ON DELETE CASCADE
+            ON UPDATE NO ACTION
+)
+    ENGINE = InnoDB;
