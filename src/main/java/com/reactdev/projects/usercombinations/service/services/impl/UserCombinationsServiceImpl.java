@@ -12,6 +12,7 @@ import com.reactdev.projects.usercombinations.web.exceptions.impl.DataNotFoundEx
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -41,7 +42,9 @@ public class UserCombinationsServiceImpl implements UserCombinationsService {
       throw new DataNotFoundException("Cannot continue action, because teams are empty");
     }
 
+
     userCombinationsRepository.deleteAll();
+
     List<UserCombinationEntity> userCombinationEntities =
         userCombinationsRepository.saveAll(
             userCombinationEntityDtoConvertor.dtoToEntity(
@@ -50,8 +53,8 @@ public class UserCombinationsServiceImpl implements UserCombinationsService {
     return userCombinationEntityDtoConvertor.convertEntityToDto(userCombinationEntities);
   }
 
-  private List<UserCombination> generateUniqueUserCombinations(
-      List<UserCombination> oldCombinations, List<User> firstCommand, List<User> secondCommand) {
+  private List<UserCombination> generateUniqueUserCombinations(List<UserCombination> oldCombinations, List<User> firstCommand, List<User> secondCommand) {
+
     List<User> biggerCommand;
     firstCommand = new ArrayList<>(firstCommand);
     secondCommand = new ArrayList<>(secondCommand);
@@ -73,6 +76,7 @@ public class UserCombinationsServiceImpl implements UserCombinationsService {
     Set<UserCombination> set2 = new HashSet<>(oldCombinations);
 
     if (!compareTeams(set1, set2, new HashSet<>(biggerCommand))) {
+      newCombinations.forEach(comb -> comb.setTimestamp(LocalDateTime.now()));
       return newCombinations;
     } else {
       return generateUniqueUserCombinations(oldCombinations, firstCommand, secondCommand);

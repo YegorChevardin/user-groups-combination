@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 /**
  * Entity class that represents users from database
  *
@@ -25,6 +28,9 @@ public class UserEntity {
 
   @Column(name = "second_name", length = 45, nullable = false)
   String secondName;
+
+  @ElementCollection
+  private List<Integer> marks;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "team_id", referencedColumnName = "id")

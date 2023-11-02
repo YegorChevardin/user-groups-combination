@@ -22,6 +22,7 @@ public class UserCombinationEntityDtoConvertor
     userCombination.setFirstUser(userEntityDtoConvertor.convertEntityToDto(entity.getFirstUser()));
     userCombination.setSecondUser(
         userEntityDtoConvertor.convertEntityToDto(entity.getSecondUser()));
+    userCombination.setTimestamp(entity.getTimestamp());
 
     return userCombination;
   }
@@ -32,6 +33,7 @@ public class UserCombinationEntityDtoConvertor
 
     userCombinationEntity.setFirstUser(userEntityDtoConvertor.dtoToEntity(dto.getFirstUser()));
     userCombinationEntity.setSecondUser(userEntityDtoConvertor.dtoToEntity(dto.getSecondUser()));
+    userCombinationEntity.setTimestamp(dto.getTimestamp());
 
     return userCombinationEntity;
   }

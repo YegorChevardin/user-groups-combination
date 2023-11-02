@@ -28,4 +28,6 @@ public class TeamEntity {
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "team")
   private List<UserEntity> users = new ArrayList<>();
+
+
 }
