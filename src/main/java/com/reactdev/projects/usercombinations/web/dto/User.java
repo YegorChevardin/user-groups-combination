@@ -3,6 +3,8 @@ package com.reactdev.projects.usercombinations.web.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * Dto class for users
  *
@@ -15,4 +17,7 @@ public class User {
   private String name;
   private String secondName;
   private Team team;
+  private List<Integer> marks;
+  private boolean isPresent = true;
+
 }

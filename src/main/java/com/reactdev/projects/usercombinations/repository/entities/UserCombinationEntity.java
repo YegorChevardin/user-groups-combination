@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 /**
  * User combination entity representation
  *
@@ -19,6 +21,9 @@ public class UserCombinationEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @Column(name = "combination_date")
+  private LocalDateTime timestamp;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "first_user_id", referencedColumnName = "id")

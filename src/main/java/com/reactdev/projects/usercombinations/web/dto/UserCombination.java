@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -18,22 +19,18 @@ public class UserCombination {
   private Long id;
   private User firstUser;
   private User secondUser;
+  private LocalDateTime timestamp;
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof UserCombination that)) return false;
-
-    if ((this.firstUser.equals(that.getFirstUser()) && this.secondUser.equals(that.getSecondUser()))
-        || (this.firstUser.equals(that.getSecondUser())
-            && this.secondUser.equals(that.getFirstUser()))) {
-      return true;
-    }
-    return false;
+    if (o == null || getClass() != o.getClass()) return false;
+    UserCombination that = (UserCombination) o;
+    return Objects.equals(id, that.id) && Objects.equals(firstUser, that.firstUser) && Objects.equals(secondUser, that.secondUser) && Objects.equals(timestamp, that.timestamp);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getFirstUser(), getSecondUser());
+    return Objects.hash(id, firstUser, secondUser, timestamp);
   }
 }

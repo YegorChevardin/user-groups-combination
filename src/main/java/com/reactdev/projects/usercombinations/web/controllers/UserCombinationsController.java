@@ -19,12 +19,14 @@ import java.util.List;
 @RequestMapping("/api/v1/user-combinations")
 @RequiredArgsConstructor
 public class UserCombinationsController {
-  private final UserCombinationsService userCombinationsService;
+    private final UserCombinationsService userCombinationsService;
 
-  /** Method for getting valid combinations */
-  @GetMapping
-  public ResponseEntity<List<UserCombination>> findAllCombinations() {
-    List<UserCombination> result = userCombinationsService.generateNewCombinations();
-    return ResponseEntity.ok(result);
-  }
+    /**
+     * Method for getting valid combinations
+     */
+    @GetMapping
+    public ResponseEntity<List<UserCombination>> findAllCombinations() {
+        List<UserCombination> result = userCombinationsService.generateNewCombinations();
+        return ResponseEntity.ok(result);
+    }
 }

@@ -21,6 +21,7 @@ public class UserEntityDtoConvertor implements ReverseEntityDtoConvertor<UserEnt
     user.setName(entity.getName());
     user.setSecondName(entity.getSecondName());
     user.setTeam(teamEntityDtoConvertor.convertEntityToDto(entity.getTeam()));
+    user.setMarks(entity.getMarks());
 
     return user;
   }
@@ -33,6 +34,7 @@ public class UserEntityDtoConvertor implements ReverseEntityDtoConvertor<UserEnt
     userEntity.setName(dto.getName());
     userEntity.setSecondName(dto.getSecondName());
     userEntity.setTeam(teamEntityDtoConvertor.dtoToEntity(dto.getTeam()));
+    userEntity.setMarks(dto.getMarks());
 
     return userEntity;
   }
