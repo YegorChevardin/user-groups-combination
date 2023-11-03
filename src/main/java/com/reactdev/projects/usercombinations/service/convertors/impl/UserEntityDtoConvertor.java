@@ -1,5 +1,6 @@
 package com.reactdev.projects.usercombinations.service.convertors.impl;
 
+import com.reactdev.projects.usercombinations.repository.entities.MarkEntity;
 import com.reactdev.projects.usercombinations.repository.entities.TeamEntity;
 import com.reactdev.projects.usercombinations.repository.entities.UserEntity;
 import com.reactdev.projects.usercombinations.service.convertors.ReverseEntityDtoConvertor;
@@ -21,6 +22,8 @@ public class UserEntityDtoConvertor implements ReverseEntityDtoConvertor<UserEnt
     user.setName(entity.getName());
     user.setSecondName(entity.getSecondName());
     user.setTeam(teamEntityDtoConvertor.convertEntityToDto(entity.getTeam()));
+    int sum = entity.getMarks().stream().map(MarkEntity::getMark).mapToInt(Integer::intValue).sum();
+    user.setTotalMark(sum);
 
     return user;
   }
