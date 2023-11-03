@@ -7,7 +7,6 @@ import com.reactdev.projects.usercombinations.repository.repositories.UserReposi
 import com.reactdev.projects.usercombinations.service.convertors.EntityDtoConvertor;
 import com.reactdev.projects.usercombinations.service.services.MarkService;
 import com.reactdev.projects.usercombinations.web.dto.Mark;
-import com.reactdev.projects.usercombinations.web.dto.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +21,8 @@ public class MarkServiceImpl implements MarkService {
     private final EntityDtoConvertor<MarkEntity, Mark> markEntityMarkEntityDtoConvertor;
 
     @Override
-    public Mark addMark(int mark, User user) {
-        UserEntity userEntity = userRepository.findByNameAndSecondName(
-                user.getName(), user.getSecondName()).get();
+    public Mark addMark(int mark, long id) {
+        UserEntity userEntity = userRepository.findById(id).get();
         MarkEntity markEntity = new MarkEntity();
         markEntity.setDate(LocalDate.now());
         markEntity.setMark(mark);
@@ -34,8 +32,8 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public List<Mark> findMarks(LocalDate date, User user) {
-        UserEntity userEntity = userRepository.findById(user.getId()).get();
+    public List<Mark> findMarks(LocalDate date, long id) {
+        UserEntity userEntity = userRepository.findById(id).get();
         List<MarkEntity> markEntities = markRepository.findAllByDateAndUser(date, userEntity);
         return markEntityMarkEntityDtoConvertor.convertEntityToDto(markEntities);
     }

@@ -21,5 +21,9 @@ public class UserServiceImpl implements UserService {
         return entityDtoConvertor.convertEntityToDto(users);
     }
 
-
+    @Override
+    public User findUser(long id) {
+        UserEntity userEntity = userRepository.findById(id).get();
+        return entityDtoConvertor.convertEntityToDto(userEntity);
+    }
 }
