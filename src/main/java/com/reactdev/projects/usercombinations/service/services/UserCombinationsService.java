@@ -1,5 +1,6 @@
 package com.reactdev.projects.usercombinations.service.services;
 
+import com.reactdev.projects.usercombinations.web.dto.User;
 import com.reactdev.projects.usercombinations.web.dto.UserCombination;
 
 import java.util.List;
@@ -11,5 +12,5 @@ import java.util.List;
  */
 public interface UserCombinationsService {
   /** Method for generating new combinations */
-  List<UserCombination> generateNewCombinations();
+  List<UserCombination> generateNewCombinations(List<User> users);
 }

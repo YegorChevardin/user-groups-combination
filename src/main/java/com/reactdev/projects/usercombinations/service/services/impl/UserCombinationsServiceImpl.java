@@ -17,113 +17,144 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class UserCombinationsServiceImpl implements UserCombinationsService {
-  private static final String FIRST_TEAM_NAME = "Orange team";
-  private static final String SECOND_TEAM_NAME = "Purple team";
+    private static final String FIRST_TEAM_NAME = "Orange team";
+    private static final String SECOND_TEAM_NAME = "Purple team";
 
-  private final UserCombinationsRepository userCombinationsRepository;
-  private final UserRepository userRepository;
-  private final ReverseEntityDtoConvertor<UserCombinationEntity, UserCombination>
-      userCombinationEntityDtoConvertor;
-  private final ReverseEntityDtoConvertor<UserEntity, User> userReverseEntityDtoConvertor;
+    private final UserCombinationsRepository userCombinationsRepository;
+    private final UserRepository userRepository;
+    private final ReverseEntityDtoConvertor<UserCombinationEntity, UserCombination>
+            userCombinationEntityDtoConvertor;
+    private final ReverseEntityDtoConvertor<UserEntity, User> userReverseEntityDtoConvertor;
 
-  @Override
-  public List<UserCombination> generateNewCombinations() {
-    List<UserCombination> userCombination =
-        userCombinationEntityDtoConvertor.convertEntityToDto(userCombinationsRepository.findAll());
-    List<User> firstCommand =
-        userReverseEntityDtoConvertor.convertEntityToDto(
-            userRepository.findAllByTeamName(FIRST_TEAM_NAME));
-    List<User> secondCommand =
-        userReverseEntityDtoConvertor.convertEntityToDto(
-            userRepository.findAllByTeamName(SECOND_TEAM_NAME));
+    @Override
+    public List<UserCombination> generateNewCombinations(List<User> users) {
+        List<UserCombination> userCombination =
+                userCombinationEntityDtoConvertor.convertEntityToDto(userCombinationsRepository.findAll());
 
-    if (firstCommand.isEmpty() || secondCommand.isEmpty()) {
-      throw new DataNotFoundException("Cannot continue action, because teams are empty");
+        List<UserEntity> allUsersFromBD = userRepository.findAllByIdIn(getIds(users));
+        List<User> allUsersDTO = userReverseEntityDtoConvertor.convertEntityToDto(allUsersFromBD);
+
+        List<Long> ids = compareIds(getIds(users), getIds(allUsersDTO));
+
+        if (!ids.isEmpty()) {
+            throw new DataNotFoundException(
+                    "User(s) with id(s)" + ids + " does not exist in DB");
+        }
+
+        List<User> firstCommand = new ArrayList<>();
+        List<User> secondCommand = new ArrayList<>();
+        for (User user : allUsersDTO) {
+            if (user.getTeam().getName().equals(FIRST_TEAM_NAME)) {
+                firstCommand.add(user);
+            } else if (user.getTeam().getName().equals(SECOND_TEAM_NAME)) {
+                secondCommand.add(user);
+            }
+        }
+
+        if (firstCommand.isEmpty() || secondCommand.isEmpty()) {
+            throw new DataNotFoundException("Cannot continue action, because teams are empty");
+        }
+
+        userCombinationsRepository.deleteAll();
+        List<UserCombinationEntity> userCombinationEntities =
+                userCombinationsRepository.saveAll(
+                        userCombinationEntityDtoConvertor.dtoToEntity(
+                                generateUniqueUserCombinations(userCombination, firstCommand, secondCommand)));
+
+        return userCombinationEntityDtoConvertor.convertEntityToDto(userCombinationEntities);
     }
 
-    userCombinationsRepository.deleteAll();
-    List<UserCombinationEntity> userCombinationEntities =
-        userCombinationsRepository.saveAll(
-            userCombinationEntityDtoConvertor.dtoToEntity(
-                generateUniqueUserCombinations(userCombination, firstCommand, secondCommand)));
+    private List<UserCombination> generateUniqueUserCombinations(
+            List<UserCombination> oldCombinations, List<User> firstCommand, List<User> secondCommand) {
+        List<User> biggerCommand;
+        firstCommand = new ArrayList<>(firstCommand);
+        secondCommand = new ArrayList<>(secondCommand);
 
-    return userCombinationEntityDtoConvertor.convertEntityToDto(userCombinationEntities);
-  }
+        Collections.shuffle(firstCommand);
+        Collections.shuffle(secondCommand);
 
-  private List<UserCombination> generateUniqueUserCombinations(
-      List<UserCombination> oldCombinations, List<User> firstCommand, List<User> secondCommand) {
-    List<User> biggerCommand;
-    firstCommand = new ArrayList<>(firstCommand);
-    secondCommand = new ArrayList<>(secondCommand);
+        List<UserCombination> newCombinations;
 
-    Collections.shuffle(firstCommand);
-    Collections.shuffle(secondCommand);
+        if (firstCommand.size() < secondCommand.size()) {
+            biggerCommand = secondCommand;
+            newCombinations = performAction(firstCommand, secondCommand);
+        } else {
+            biggerCommand = firstCommand;
+            newCombinations = performAction(secondCommand, firstCommand);
+        }
 
-    List<UserCombination> newCombinations;
+        Set<UserCombination> set1 = new HashSet<>(newCombinations);
+        Set<UserCombination> set2 = new HashSet<>(oldCombinations);
 
-    if (firstCommand.size() < secondCommand.size()) {
-      biggerCommand = secondCommand;
-      newCombinations = performAction(firstCommand, secondCommand);
-    } else {
-      biggerCommand = firstCommand;
-      newCombinations = performAction(secondCommand, firstCommand);
+        if (!compareTeams(set1, set2, new HashSet<>(biggerCommand))) {
+            return newCombinations;
+        } else {
+            return generateUniqueUserCombinations(oldCombinations, firstCommand, secondCommand);
+        }
     }
 
-    Set<UserCombination> set1 = new HashSet<>(newCombinations);
-    Set<UserCombination> set2 = new HashSet<>(oldCombinations);
+    private boolean compareTeams(
+            Set<UserCombination> newCombinations,
+            Set<UserCombination> oldCombinations,
+            Set<User> biggerTeamUsers) {
+        for (UserCombination element : newCombinations) {
+            if (oldCombinations.contains(element)) {
+                return true;
+            }
+        }
 
-    if (!compareTeams(set1, set2, new HashSet<>(biggerCommand))) {
-      return newCombinations;
-    } else {
-      return generateUniqueUserCombinations(oldCombinations, firstCommand, secondCommand);
-    }
-  }
+        List<User> biggerTeamUsersFromOldCombinations =
+                extractSecondUsersFromCombinations(oldCombinations);
+        Set<User> biggerTeamUsersFromNewCombinations =
+                new HashSet<>(extractSecondUsersFromCombinations(newCombinations));
 
-  private boolean compareTeams(
-      Set<UserCombination> newCombinations,
-      Set<UserCombination> oldCombinations,
-      Set<User> biggerTeamUsers) {
-    for (UserCombination element : newCombinations) {
-      if (oldCombinations.contains(element)) {
-        return true;
-      }
-    }
+        Set<User> userDifference = new HashSet<>(biggerTeamUsers);
+        biggerTeamUsersFromOldCombinations.forEach(userDifference::remove);
+        userDifference.addAll(biggerTeamUsersFromOldCombinations);
 
-    List<User> biggerTeamUsersFromOldCombinations =
-        extractSecondUsersFromCombinations(oldCombinations);
-    Set<User> biggerTeamUsersFromNewCombinations =
-        new HashSet<>(extractSecondUsersFromCombinations(newCombinations));
-
-    Set<User> userDifference = new HashSet<>(biggerTeamUsers);
-    biggerTeamUsersFromOldCombinations.forEach(userDifference::remove);
-    userDifference.addAll(biggerTeamUsersFromOldCombinations);
-
-    if (userDifference.size() > biggerTeamUsersFromNewCombinations.size()) {
-      return !userDifference.containsAll(biggerTeamUsersFromNewCombinations);
-    }
-    return !biggerTeamUsersFromNewCombinations.containsAll(userDifference);
-  }
-
-  private List<UserCombination> performAction(List<User> iterable, List<User> partners) {
-    List<UserCombination> combinations = new ArrayList<>();
-
-    for (User currentFirstUser : iterable) {
-      UserCombination userCombination = new UserCombination();
-      userCombination.setFirstUser(currentFirstUser);
-      userCombination.setSecondUser(partners.get(iterable.indexOf(currentFirstUser)));
-      combinations.add(userCombination);
+        if (userDifference.size() > biggerTeamUsersFromNewCombinations.size()) {
+            return !userDifference.containsAll(biggerTeamUsersFromNewCombinations);
+        }
+        return !biggerTeamUsersFromNewCombinations.containsAll(userDifference);
     }
 
-    return combinations;
-  }
+    private List<UserCombination> performAction(List<User> iterable, List<User> partners) {
+        List<UserCombination> combinations = new ArrayList<>();
 
-  private List<User> extractSecondUsersFromCombinations(Set<UserCombination> combinations) {
-    List<User> result = new ArrayList<>();
+        for (User currentFirstUser : iterable) {
+            UserCombination userCombination = new UserCombination();
+            userCombination.setFirstUser(currentFirstUser);
+            userCombination.setSecondUser(partners.get(iterable.indexOf(currentFirstUser)));
+            combinations.add(userCombination);
+        }
 
-    for (UserCombination combination : combinations) {
-      result.add(combination.getSecondUser());
+        return combinations;
     }
 
-    return result;
-  }
+    private List<User> extractSecondUsersFromCombinations(Set<UserCombination> combinations) {
+        List<User> result = new ArrayList<>();
+
+        for (UserCombination combination : combinations) {
+            result.add(combination.getSecondUser());
+        }
+
+        return result;
+    }
+
+    private List<Long> getIds(List<User> users) {
+        return users.stream().map(User::getId).toList();
+    }
+
+    private List<Long> compareIds(List<Long> idsFromFront, List<Long> idsFromDB) {
+        Set<Long> setIdsFromFront = new HashSet<>(idsFromFront);
+        Set<Long> setIdsFromDB = new HashSet<>(idsFromDB);
+        List<Long> ids = new ArrayList<>();
+
+        for (Long id : setIdsFromFront) {
+            if (!setIdsFromDB.contains(id)) {
+                ids.add(id);
+            }
+        }
+        return ids;
+    }
 }

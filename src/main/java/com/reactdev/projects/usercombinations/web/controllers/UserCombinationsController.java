@@ -1,10 +1,12 @@
 package com.reactdev.projects.usercombinations.web.controllers;
 
 import com.reactdev.projects.usercombinations.service.services.UserCombinationsService;
+import com.reactdev.projects.usercombinations.web.dto.User;
 import com.reactdev.projects.usercombinations.web.dto.UserCombination;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,8 +25,8 @@ public class UserCombinationsController {
 
   /** Method for getting valid combinations */
   @GetMapping
-  public ResponseEntity<List<UserCombination>> findAllCombinations() {
-    List<UserCombination> result = userCombinationsService.generateNewCombinations();
+  public ResponseEntity<List<UserCombination>> findAllCombinations(@RequestBody List<User> users) {
+    List<UserCombination> result = userCombinationsService.generateNewCombinations(users);
     return ResponseEntity.ok(result);
   }
 }
